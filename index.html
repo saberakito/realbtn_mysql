@@ -1,0 +1,89 @@
+<html>
+	<head>
+		<title>
+			IO CHAT
+		</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+		<style>
+			body{
+				margin-top:40px;
+				
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<button id="btn1" attr="0" class="btn btn-default">Click Me No.1</button>
+			<button id="btn2" attr="0" class="btn btn-default">Click Me No.2</button>
+			<button id="btn3" attr="0" class="btn btn-default">Click Me No.3</button>
+		</div>
+		
+		<script>
+			$(function(){
+				var socket = io.connect('http://127.0.0.1:3000');
+				//event click button
+				$("#btn1").click( function ( event ) {
+					event.preventDefault();
+					socket.emit('updatebutton',{btn:'#btn1',status:$("#btn1").attr("attr"),btn_id:$("#btn1").attr("attr_id")});
+				});
+				
+				$("#btn2").click( function ( event ) {
+					event.preventDefault();
+					socket.emit('updatebutton',{btn:'#btn2',status:$("#btn2").attr("attr"),btn_id:$("#btn2").attr("attr_id")});
+				});
+				
+				$("#btn3").click( function ( event ) {
+					event.preventDefault();
+					socket.emit('updatebutton',{btn:'#btn3',status:$("#btn3").attr("attr"),btn_id:$("#btn3").attr("attr_id")});
+				});
+				
+				
+				
+				
+				//realtime update
+				socket.on('eventbtnUpdate',function(data){
+					if(data.datareturn==1){
+						$(data.name_button).attr("attr",data.datareturn);
+						$(data.name_button).removeClass( "btn-primary" );
+						$(data.name_button).removeClass( "btn-default" );
+						$(data.name_button).addClass( "btn-primary" );
+					}else{
+						$(data.name_button).attr("attr",data.datareturn);
+						$(data.name_button).removeClass( "btn-primary" );
+						$(data.name_button).removeClass( "btn-default" );
+						$(data.name_button).addClass( "btn-default" );
+					}
+				});
+				
+				socket.on('initialbutton', function(data){
+					for(i=0;i<data.length;i++){
+						debugger;
+						if(data[i].btn_status==1){
+							$(data[i].btn_name).attr("attr",data[i].btn_status);
+							$(data[i].btn_name).attr("attr_id",data[i].btn_id);
+							$(data[i].btn_name).removeClass( "btn-primary" );
+							$(data[i].btn_name).removeClass( "btn-default" );
+							$(data[i].btn_name).addClass( "btn-primary" );
+						}else{
+							$(data[i].btn_name).attr("attr",data[i].btn_status);
+							$(data[i].btn_name).attr("attr_id",data[i].btn_id);
+							$(data[i].btn_name).removeClass( "btn-primary" );
+							$(data[i].btn_name).removeClass( "btn-default" );
+							$(data[i].btn_name).addClass( "btn-default" );
+						}
+					}
+				});
+				
+			})
+		</script>
+	</body>
+</html>
